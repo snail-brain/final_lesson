@@ -1,0 +1,17 @@
+dependencies:
+  - OpenZeppelin/openzeppelin-contracts@4.2.0
+  - smartcontractkit/chainlink-brownie-contracts@0.3.1
+compiler:
+  solc:
+    remappings:
+      - '@openzeppelin=OpenZeppelin/openzeppelin-contracts@4.2.0'
+      - '@chainlink=smartcontractkit/chainlink-brownie-contracts@0.3.1'
+networks:
+  default: polygon-main-fork
+  polygon-main-fork:
+    weth: '0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619'
+    eth_usd_price_feed: '0xF9680D99D6C9589e2a93a78A04A279e509205945'
+
+dotenv: .env
+wallets:
+  from_key: ${PRIVATE_KEY}
