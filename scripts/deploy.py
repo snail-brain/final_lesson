@@ -13,6 +13,7 @@ def main():
 
     print("Deploying Token Farm")
     farm = TokenFarm.deploy(token.address, {"from": account})
+    token.transfer(farm.address, token.balanceOf(account.address))
 
     farm.addAllowedToken(
         weth.address,
@@ -43,11 +44,15 @@ def main():
         f"Your current staked TVL in usd: {farm.findUserTVL(account.address) / 10 ** 18}"
     )
 
-    """
-    print("Issuing tokens")
+    print("Issuing Tokens")
     farm.issueTokens({"from": account})
-
     print(
-        f"Your DappToken balance: {token.balanceOf(account.address) / 10 ** token.decimals()}"
+        f"DappToken Balance: {token.balanceOf(account.address) / 10 ** token.decimals()}"
     )
-"""
+
+    print("Unstaking Tokens")
+    farm.unstake(weth.address, weth_amount, {"from": account})
+    farm.unstake(dai.address, dai_amount, {"from": account})
+
+    print(f"Your wETH Balance: {weth.balanceOf(account.address)}")
+    print(f"Your Dai Balance: {dai.balanceOf(account.address)}")

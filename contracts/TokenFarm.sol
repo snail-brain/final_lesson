@@ -31,13 +31,33 @@ contract TokenFarm is Ownable {
         balances[msg.sender][_token] += _amount;
     }
 
+    function unstake(address _token, uint256 _amount) public {
+        uint256 balance = balances[msg.sender][_token];
+        require(balance > 0, "You don't have any tokens to unstake!");
+
+        balances[msg.sender][_token] -= _amount;
+        if (balances[msg.sender][_token] <= 0) {
+            uniqueTokensStaked[msg.sender] -= 1;
+        }
+
+        if (uniqueTokensStaked[msg.sender] <= 0) {
+            for (uint256 i = 0; i < stakers.length; i++) {
+                if (stakers[i] == msg.sender) {
+                    delete stakers[i];
+                    break;
+                }
+            }
+        }
+
+        IERC20(_token).transfer(msg.sender, _amount);
+    }
+
     function issueTokens() public onlyOwner {
         for (uint256 i = 0; i < stakers.length; i++) {
             address staker = stakers[i];
             uint256 userTVL = findUserTVL(staker);
-            uint256 amountToTransfer;
 
-            IERC20(DappToken).transfer(staker, amountToTransfer);
+            IERC20(DappToken).transfer(staker, userTVL);
         }
     }
 
