@@ -1,18 +1,53 @@
-from brownie import TokenFarm, network, config
+from brownie import TokenFarm, network, config, DappToken
 from scripts.helpful_scripts import *
 
 account = getAccount()
 
 
 def main():
-    farm = TokenFarm.deploy({"from": account})
+    print("Deploying Dapp Token")
+    token = DappToken.deploy({"from": account})
+
+    weth_amount = weth.balanceOf(account.address)
+    dai_amount = dai.balanceOf(account.address)
+
+    print("Deploying Token Farm")
+    farm = TokenFarm.deploy(token.address, {"from": account})
+
     farm.addAllowedToken(
-        config["networks"][network.show_active()]["weth"],
-        config["networks"][network.show_active()]["eth_dai_price_feed"],
+        weth.address,
+        config["networks"][network.show_active()]["eth_usd_price_feed"],
         {"from": account},
     )
 
-    print(farm.getPrice(config["networks"][network.show_active()]["weth"]))
+    farm.addAllowedToken(
+        dai.address,
+        config["networks"][network.show_active()]["dai_usd_price_feed"],
+        {"from": account},
+    )
 
+    print("Approving wETH for transfer")
+    weth.approve(farm.address, weth_amount, {"from": account})
+    print("Approving Dai for transfer")
+    dai.approve(farm.address, dai_amount, {"from": account})
 
-main()
+    print("Staking wETH")
+    farm.stakeTokens(weth_amount, weth.address, {"from": account})
+    print("Staking Dai")
+    farm.stakeTokens(dai_amount, dai.address, {"from": account})
+
+    print(weth.balanceOf(farm.address))
+    print(dai.balanceOf(farm.address))
+
+    print(
+        f"Your current staked TVL in usd: {farm.findUserTVL(account.address) / 10 ** 18}"
+    )
+
+    """
+    print("Issuing tokens")
+    farm.issueTokens({"from": account})
+
+    print(
+        f"Your DappToken balance: {token.balanceOf(account.address) / 10 ** token.decimals()}"
+    )
+"""

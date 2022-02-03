@@ -1,8 +1,20 @@
-from brownie import accounts, network, config
+from brownie import accounts, network, config, Contract
 import eth_utils
+import json
 
 Local_Blockchain_Environments = ["development", "ganache-local"]
 Forked_Environments = ["mainnet-fork", "moonriver-fork"]
+
+with open("./abis/weth.json") as json_file:
+    weth = Contract.from_abi(
+        "wETH", "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619", json.load(json_file)
+    )
+
+
+with open("./abis/dai.json") as json_file:
+    dai = Contract.from_abi(
+        "Dai", "0x8f3cf7ad23cd3cadbd9735aff958023239c6a063", json.load(json_file)
+    )
 
 
 def getAccount(index=None, id=None):

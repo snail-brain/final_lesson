@@ -10,7 +10,9 @@ networks:
   default: polygon-main-fork
   polygon-main-fork:
     weth: '0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619'
+    dai: '0x8f3cf7ad23cd3cadbd9735aff958023239c6a063'
     eth_usd_price_feed: '0xF9680D99D6C9589e2a93a78A04A279e509205945'
+    dai_usd_price_feed: '0x4746DeC9e833A82EC7C2C1356372CcF2cfcD2F3D'
 
 dotenv: .env
 wallets:

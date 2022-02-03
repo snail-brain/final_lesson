@@ -24,11 +24,11 @@ contract TokenFarm is Ownable {
 
         IERC20(_token).transferFrom(msg.sender, address(this), _amount);
 
-        balances[msg.sender][_token] += _amount;
-        updateUniqueTokensStaked(msg.sender, _token);
-        if (uniqueTokensStaked[msg.sender] >= 1) {
+        if (uniqueTokensStaked[msg.sender] < 1) {
             stakers.push((msg.sender));
         }
+        updateUniqueTokensStaked(msg.sender, _token);
+        balances[msg.sender][_token] += _amount;
     }
 
     function issueTokens() public onlyOwner {
